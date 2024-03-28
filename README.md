@@ -1,4 +1,7 @@
 <!-- language: en -->
+[![中文](https://img.shields.io/badge/lang-zh-red.svg)](https://github.com/sisyphusw/save-editor/docs/README.zh.md)
+[![en](https://img.shields.io/badge/lang-en-green.svg)](https://github.com/sisyphusw/save-editor/README.md)
+
 
 **Game Save Editor** write in Python
 
