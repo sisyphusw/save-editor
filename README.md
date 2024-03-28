@@ -1,18 +1,19 @@
+<!-- language: en -->
 
-python写的**游戏存档编辑器**
+**Game Save Editor** write in Python
 
-提供一种通用的解析、修改和转换 二进制存档文件的思路
+Provide a generic approach to parsing, editing, and converting binary save files.
 
-## 如何实现
+## How it Works
 
-通过[Kaitai Struct](https://github.com/kaitai-io/kaitai_struct), 一种声明性语言，用于描述文件或内存中的各种二进制数据结构。
+Base on [Kaitai Struct](https://github.com/kaitai-io/kaitai_struct), a declarative language for describing various binary data structures found in files or memory.
 
-### 定义
-定义二进制存档文件的数据格式，用yaml文件[unicorn_overlord_dat.ksy](./unicorn_overlord/switch/v1_00/unicorn_overlord_dat.ksy)
+### Define
+Defines the data format of the binary save file using a YAML file [unicorn_overlord_dat.ksy](./unicorn_overlord/switch/v1_00/unicorn_overlord_dat.ksy).
 
-- 魔数
-- 文件大小
-- 存档槽位
+- Magic Number
+- File Size
+- Slot
 
 ```yaml
 seq:
@@ -27,11 +28,9 @@ seq:
   - id: slot
     type: u4
 ```
-
-### 编译
-使用`kaitai_struct_compiler`，将`unicorn_overlord_dat.ksy`编译为
-
-python文件[unicorn_overlord_dat.py](./unicorn_overlord/switch/v1_00/unicorn_overlord_dat.py)。如何就可以将二进制数据被解析为python中的数据对象
+### Compile
+Using `kaitai_struct_compiler`, compiles `unicorn_overlord_dat.ksy` into a
+python file [unicorn_overlord_dat.py](./unicorn_overlord/switch/v1_00/unicorn_overlord_dat.py), which allows binary data to be parsed into Python data objects.
 ```python
 class UnicornOverlordDat(ReadWriteKaitaiStruct):
     def _read(self):
@@ -40,14 +39,19 @@ class UnicornOverlordDat(ReadWriteKaitaiStruct):
         self.slot = self._io.read_u4le()
 ```
 
+## How to Use
 
-## 如何使用
-如果要使用命令行工具的话，需要安装`typer`
+If you want to use command-line tool, you need to install `typer`.
 
     pip3 install typer
 
-### 命令行
-目前使用[typer](https://github.com/tiangolo/typer)写了一个简陋的命令行工具，提供解析和修改功能
+### CLI
+a command-line tool is written using typer, which can parse and edit save file. 
+
+game support
+
+* Unicron Overlord
+
 ```shell
 # parse
 python main.py parse "Unicorn Overlord" "switch" "v1.00" example/UCSAVEFILE03.DAT --output UCSAVEFILE03.DAT.json
@@ -55,8 +59,9 @@ python main.py parse "Unicorn Overlord" "switch" "v1.00" example/UCSAVEFILE03.DA
 # edit
 python main.py edit "Unicorn Overlord" "switch" "v1.00" example/UCSAVEFILE03.DAT UCSAVEFILE03.DAT.edited.json --output UCSAVEFILE03.DAT.edited
 ```
+
 ### python 
-调用`save_editor.py`文件中的`SaveEditor`对象
+`SaveEditor` object from the `save_editor.py` file.
 ```python
 from save_editor import SaveEditor
 
@@ -66,26 +71,25 @@ parsed_dict = se.parse(bytes)
 # edit
 edited_bytes = se.edit(dict, bytes)
 ```
-实际代码很简单，只是为了模块版本管理。考虑到一个游戏在多个平台上
 
-存档文件格式可能会有所区别，另外版本差距太大也可能变化
+Actual, the code is very simple. But for module version management, considering that a game may be on multiple platforms, the save file format may differ, and also version masters.
 
-## 比较
-#### 传统方式 
-二进制数据结构定义和解析逻辑在代码逻辑中
-* 简单直接
-* 维护和扩展相对麻烦，试想一下重复写类似的逻辑的心情
-#### 声明式
-用特定语言定义在yaml文件中
-* 通用易扩展
-* 学习曲线陡峭
+## Pros && Cons
+#### Traditional 
+Binary data structure definitions and parsing logic are in the code logic.
+* Simple and straight
+* Maintain and extension are relatively difficult, repeatedly writing similar code.
+#### Declarative
+Defined in YAML or other file format using a specific language
+* Universal and easy to extend
+* Steep learning curve
 
-## 扩展
-kaitai的可视化[Web IDE](https://ide.kaitai.io)
+## What more
+Kaitai's visual Web IDE
 
-这个思路也可以用于其他场景，
+This approach can also be used in other scenarios.
 
-IDE里有很多已经定义好的文件格式，比如压缩，图片和网络相关的
+The IDE has many predefined file formats, such as compression, images, and network-related.
 
 ## Credit
-[pj1980](https://gbatemp.net/members/pj1980.378437) from [GBATEMP](https://gbatemp.net/threads/unicorn-overlord-save-editing.650584) —— 圣兽之王存档格式解析 
+[pj1980](https://gbatemp.net/members/pj1980.378437) from [GBATEMP](https://gbatemp.net/threads/unicorn-overlord-save-editing.650584) —— Unicorn Overlord save file format parsing
